@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EntityFrameworkNet5.Domain
 {
-    internal class Team
+    public class Team
     {
         public int Id { get; set; }
         public string Name { get; set; }
