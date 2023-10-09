@@ -50,3 +50,19 @@ Our instructions to the Database (such as creating tables)
     - If it's the first time running, it creates a folder called Migrations in the project, containing the migration file and a context snapshot
     - The migration contains both an `Up` and `Down` method
 - Finally ran `update-database` which actually runs the migrations
+
+### Migration Scripts
+
+- If you don't want EF Core to have complete control, you can use the Package Manager Console to generate SQL scripts instead
+- Just use the `script-migration` in the Console
+- This might be useful if you need to hand off the DB changes to someone else in your organisation (e.g. a DB administrator)
+
+### Reverse engineer an existing database
+
+- You still need to have domain models for your tables (but don't need DbContext)
+- Use the `Scaffold-DbContext` command:
+    `Scaffold-DbContext -provider Microsoft.EntityFrameworkCore.SqlServer - connection "Data Source=(localdb)\MSSQLLocalDB; Initial Catalog=FootballLeague_EfCore"`
+- We're using the same stuff for our DB above, but:
+    - `provider` = the DB provider - doesn't need to be SqlServer, could be PostgreSQL etc.
+    - `connection` = the equivalent of the connection string we set up in DbContext earlier
+
