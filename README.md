@@ -92,4 +92,66 @@ Our instructions to the Database (such as creating tables)
     }
     ```
 - Adding the `EnableSensitiveDataLogging() call will show more detail (that we wouldn't want shown elsewhere)
-- Shows things like parameters, time taken to executre command, SQL code that was generated etc.
+- Shows things like parameters, time taken to execute command, SQL code that was generated etc.
+
+## Simple Insert Operations
+
+- In the console app, instantiate the context: `private static FootballLeagueDbContext context = new FootballLeagueDbContext();`
+
+### League
+
+- Add any changes that need to be made: `context.Leagues.Add(new League { Name = "Red Stripe Premiere League" });`
+    - You can also pass in the object of the right type instead:
+    ```cs
+    var league = new League { Name = "La Liga" };
+    context.Leagues.Add(league);
+    ```
+- You must **ALWAYS** call SaveChanges() to ensure they are persisted: `context.SaveChanges();`
+- You can also do all of these operations asynchronously:
+    ```cs
+    await context.Leagues.AddAsync(new League { Name = "La Liga" });
+    await context.SaveChangesAsync();
+    ```
+
+### Teams
+
+- We are using the league ID from our created league because that is the foreign key of our teams: `await AddTeamsWithLeague(league);`
+    ```cs
+    static async Task AddTeamsWithLeague(League league)
+    {
+        var teams = new List<Team>
+        {
+            new Team
+            {
+            Name = "Juventus",
+            LeagueId = league.Id
+            },
+            new Team
+            {
+                Name = "AC Milan",
+                LeagueId = league.Id
+            },
+            new Team
+            {
+                Name = "AS Roma",
+                League = league
+            }
+        };
+        await context.AddRangeAsync(teams);
+    }
+    ```
+- Note with Juve and AC Milan we are explicitly setting the Foreign Key (FK), 
+but with AS Roma we are actually passing in the navigational property of the League (which includes the FK)
+- Both are valid, but using the navigational property can be more powerful
+- Also note the use of `context.AddRangeAsync()` to add a list
+
+### Simplifying/Compounding
+
+- EF Core is very clever and doesn't always need explicit instructions! 
+- This will still create the league first, and then the team in one go:
+    ```cs
+    var league = new League { Name = "Bundesliga" };
+    var team = new Team { Name = "Bayern Munich", League = league };
+    await context.AddAsync(team);
+    await context.SaveChangesAsync();
+    ```
