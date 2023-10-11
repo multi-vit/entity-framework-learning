@@ -1,5 +1,6 @@
 ﻿using EntityFrameworkNet5.Data;
 using EntityFrameworkNet5.Domain;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace EntityFrameworkNet5.ConsoleApp
@@ -15,18 +16,18 @@ namespace EntityFrameworkNet5.ConsoleApp
             // await AddNewTeamsWithLeague();
 
             /* Simple Select Queries */
-            // SimpleSelectAllQuery();
+            await SimpleSelectAllQuery();
 
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
         }
 
-        static void SimpleSelectAllQuery()
+        static async Task SimpleSelectAllQuery()
         {
             // Get all leagues (SQL: SELECT * FROM Leagues)
             // Smartest, efficient way 
-            var leagues = context.Leagues.ToList();
+            var leagues = await context.Leagues.ToListAsync();
             foreach (var league in leagues)
             {
                 Console.WriteLine($"{league.Id}: {league.Name}");
