@@ -172,3 +172,13 @@ but with AS Roma we are actually passing in the navigational property of the Lea
 - **ALWAYS** store it  in a variable first before iteration, otherwise you 
 will keep the connection open for the duration of iteration and also might
 create a lock on the table if you do this
+- You can also make this asynchronous:
+    ```cs
+    // Get all leagues (SQL: SELECT * FROM Leagues)
+    // Smartest, efficient way 
+    var leagues = await context.Leagues.ToListAsync();
+    foreach (var league in leagues)
+    {
+        Console.WriteLine($"{league.Id}: {league.Name}");
+    }
+    ```
