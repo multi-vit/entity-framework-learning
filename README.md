@@ -155,3 +155,20 @@ but with AS Roma we are actually passing in the navigational property of the Lea
     await context.AddAsync(team);
     await context.SaveChangesAsync();
     ```
+
+## Simple Select Operations
+
+- We're going to be using LINQ: Language Integrated Query
+- Select ALL:
+    ```cs
+    // Get all leagues (SQL: SELECT * FROM Leagues)
+    // Smartest, efficient way 
+    var leagues = context.Leagues.ToList();
+    foreach (var league in leagues)
+    {
+        Console.WriteLine($"{league.Id}: {league.Name}");
+    }
+    ```
+- **ALWAYS** store it  in a variable first before iteration, otherwise you 
+will keep the connection open for the duration of iteration and also might
+create a lock on the table if you do this
