@@ -26,7 +26,9 @@ namespace EntityFrameworkNet5.ConsoleApp
 
         private static async Task QueryFilters()
         {
-            var leagues = await context.Leagues.Where(league => league.Name == "Serie A").ToListAsync();
+            Console.Write("Enter League Name: ");
+            var leagueName = Console.ReadLine();
+            var leagues = await context.Leagues.Where(league => league.Name.Equals(leagueName)).ToListAsync();
             foreach (var league in leagues)
             {
                 Console.WriteLine($"{league.Id}: {league.Name}");
