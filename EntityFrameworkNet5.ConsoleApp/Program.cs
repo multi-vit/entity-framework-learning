@@ -26,10 +26,15 @@ namespace EntityFrameworkNet5.ConsoleApp
 
         private static async Task QueryFilters()
         {
-            Console.Write("Enter League Name: ");
-            var leagueName = Console.ReadLine();
-            var leagues = await context.Leagues.Where(league => league.Name.Equals(leagueName)).ToListAsync();
-            foreach (var league in leagues)
+            var fullLeagueName = "Serie A";
+            var exactMatches = await context.Leagues.Where(league => league.Name.Equals(fullLeagueName)).ToListAsync();
+            foreach (var league in exactMatches)
+            {
+                Console.WriteLine($"{league.Id}: {league.Name}");
+            }
+            var partialLeagueName = "Premiere";
+            var partialMatches = await context.Leagues.Where(league => league.Name.Contains(partialLeagueName)).ToListAsync();
+            foreach (var league in partialMatches)
             {
                 Console.WriteLine($"{league.Id}: {league.Name}");
             }
