@@ -33,7 +33,8 @@ namespace EntityFrameworkNet5.ConsoleApp
                 Console.WriteLine($"{league.Id}: {league.Name}");
             }
             var partialLeagueName = "Premiere";
-            var partialMatches = await context.Leagues.Where(league => league.Name.Contains(partialLeagueName)).ToListAsync();
+            // var partialMatches = await context.Leagues.Where(league => league.Name.Contains(partialLeagueName)).ToListAsync();
+            var partialMatches = await context.Leagues.Where(league => EF.Functions.Like(league.Name, $"%{partialLeagueName}%")).ToListAsync();
             foreach (var league in partialMatches)
             {
                 Console.WriteLine($"{league.Id}: {league.Name}");
