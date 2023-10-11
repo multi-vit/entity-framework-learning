@@ -219,3 +219,12 @@ create a lock on the table if you do this
         Console.WriteLine($"{league.Id}: {league.Name}");
     }
     ```
+- An alternative is to use `EF.Functions()` such as `Like`, enclosing the variable with `%` either side:
+    ```cs
+    var partialLeagueName = "Premiere";
+    var partialMatches = await context.Leagues.Where(league => EF.Functions.Like(league.Name, $"%{partialLeagueName}%")).ToListAsync();
+    foreach (var league in partialMatches)
+    {
+        Console.WriteLine($"{league.Id}: {league.Name}");
+    }
+    ```
