@@ -185,6 +185,8 @@ create a lock on the table if you do this
 
 ### Filtering Records
 
+#### Exact Match
+
 - Use a simple `Where()` clause which takes a lambda function for comparison:
     ```cs
     var leagues = await context.Leagues.Where(league => league.Name == "Serie A").ToListAsync();
@@ -201,6 +203,18 @@ create a lock on the table if you do this
     var leagueName = Console.ReadLine();
     var leagues = await context.Leagues.Where(league => league.Name.Equals(leagueName)).ToListAsync();
     foreach (var league in leagues)
+    {
+        Console.WriteLine($"{league.Id}: {league.Name}");
+    }
+    ```
+
+#### Fuzzy logic
+
+- Use `.Contains()` instead of `.Equals()` to give fuzzy logic style results:
+    ```cs
+    var partialLeagueName = "Premiere";
+    var partialMatches = await context.Leagues.Where(league => league.Name.Contains(partialLeagueName)).ToListAsync();
+    foreach (var league in partialMatches)
     {
         Console.WriteLine($"{league.Id}: {league.Name}");
     }
