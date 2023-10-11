@@ -182,3 +182,16 @@ create a lock on the table if you do this
         Console.WriteLine($"{league.Id}: {league.Name}");
     }
     ```
+
+### Filtering Records
+
+- Use a simple `Where()` clause which takes a lambda function for comparison:
+    ```cs
+    var leagues = await context.Leagues.Where(league => league.Name == "Serie A").ToListAsync();
+    foreach (var league in leagues)
+    {
+        Console.WriteLine($"{league.Id}: {league.Name}");
+    }
+    ```
+- This won't get parameterized like it would normally because we've hardcoded the comparison string so EF Core assumes it's safe
+- 
