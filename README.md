@@ -193,5 +193,15 @@ create a lock on the table if you do this
         Console.WriteLine($"{league.Id}: {league.Name}");
     }
     ```
+- This returns all records that match
 - This won't get parameterized like it would normally because we've hardcoded the comparison string so EF Core assumes it's safe
-- 
+- But it will parameterize it if you pass in a variable, like this:
+    ```cs
+    Console.Write("Enter League Name: ");
+    var leagueName = Console.ReadLine();
+    var leagues = await context.Leagues.Where(league => league.Name.Equals(leagueName)).ToListAsync();
+    foreach (var league in leagues)
+    {
+        Console.WriteLine($"{league.Id}: {league.Name}");
+    }
+    ```
