@@ -16,11 +16,21 @@ namespace EntityFrameworkNet5.ConsoleApp
             // await AddNewTeamsWithLeague();
 
             /* Simple Select Queries */
-            await SimpleSelectAllQuery();
+            // await SimpleSelectAllQuery();
 
+            await QueryFilters();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
+        }
+
+        private static async Task QueryFilters()
+        {
+            var leagues = await context.Leagues.Where(league => league.Name == "Serie A").ToListAsync();
+            foreach (var league in leagues)
+            {
+                Console.WriteLine($"{league.Id}: {league.Name}");
+            }
         }
 
         static async Task SimpleSelectAllQuery()
