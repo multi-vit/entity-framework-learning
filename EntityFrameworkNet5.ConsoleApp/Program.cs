@@ -22,10 +22,38 @@ namespace EntityFrameworkNet5.ConsoleApp
             // await QueryFilters();
 
             /* Aggregate Functions */
-            await AdditionalExecutionMethods();
+            // await AdditionalExecutionMethods();
+
+            await AlternativeLinqSyntax();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
+        }
+
+        private static async Task AlternativeLinqSyntax()
+        {
+            // Select All
+            // From <queryTokenRepresentingARecord> in <tableName>, select <Record> (no filer)
+            // Returns IQueryable but can call .ToList() or .ToListAsync() methods on it if needed
+            // As IQueryable doesn't have all the same methods as a List
+            var teams = from i in context.Teams select i;
+            foreach (var team in teams)
+            {
+                Console.WriteLine($"{team.Id}: {team.Name}");
+            }
+            // With equality WHERE clause and ToListAsync
+            var specificTeam = await (from i in context.Teams where i.Name == "Juventus" select i).ToListAsync();
+            foreach (var team in specificTeam)
+            {
+                Console.WriteLine($"{team.Id}: {team.Name}");
+            }
+            // Use with EF LIKE function
+            var fuzzyTeamName = "Mil";
+            var fuzzyTeam = from i in context.Teams where EF.Functions.Like(i.Name, $"%{fuzzyTeamName}%") select i;
+            foreach (var team in fuzzyTeam)
+            {
+                Console.WriteLine($"{team.Id}: {team.Name}");
+            }
         }
 
         private static async Task AdditionalExecutionMethods()
