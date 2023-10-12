@@ -23,11 +23,40 @@ namespace EntityFrameworkNet5.ConsoleApp
 
             /* Aggregate Functions */
             // await AdditionalExecutionMethods();
+            // await AlternativeLinqSyntax();
 
-            await AlternativeLinqSyntax();
+            /* Perform Update */
+            // await SimpleUpdateLeagueRecord();
+            await SimpleUpdateTeamRecord();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
+        }
+
+        private static async Task SimpleUpdateTeamRecord()
+        {
+            // Update a record where we already have the details of it from a previous GET
+            var team = new Team
+            {
+                Id = 5,
+                Name = "Andy United",
+                LeagueId = 1
+            };
+            context.Teams.Update(team);
+            await context.SaveChangesAsync();
+        }
+
+        private static async Task SimpleUpdateLeagueRecord()
+        {
+            // Retrieve Record (Find league with an ID of 3)
+            var league = await context.Leagues.FindAsync(3);
+            // Make Record Changes
+            league.Name = "Scottish Premiership";
+            // Save Changes
+            await context.SaveChangesAsync();
+            // Retrieve Record again to check it has been updated
+            var updatedLeague = await context.Leagues.FindAsync(3);
+            Console.WriteLine($"{updatedLeague.Id}: {updatedLeague.Name}");
         }
 
         private static async Task AlternativeLinqSyntax()
