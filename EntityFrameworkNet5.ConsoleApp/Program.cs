@@ -18,10 +18,37 @@ namespace EntityFrameworkNet5.ConsoleApp
             /* Simple Select Queries */
             // await SimpleSelectAllQuery();
 
-            await QueryFilters();
+            /*  Queries With Filters*/
+            // await QueryFilters();
+
+            /* Aggregate Functions */
+            await AdditionalExecutionMethods();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
+        }
+
+        private static async Task AdditionalExecutionMethods()
+        {
+            // Syntax for use is context.<TableName>.<Method>(<Optional Lambda query>) e.g.:
+            // var league = await context.Leagues.FirstOrDefaultAsync(q => q.Name.Contains("A"));
+            // This is just setting up leagues for reuse and keeping the examples DRY
+            var leagues = context.Leagues;
+            // All items
+            var list = await leagues.ToListAsync();
+            // Specific items
+            var first = await leagues.FirstAsync();
+            var firstOrDefault = await leagues.FirstOrDefaultAsync();
+            var single = await leagues.SingleAsync();
+            var singleOrDefault = await leagues.SingleOrDefaultAsync();
+            // Mathematical methods
+            var count = await leagues.CountAsync();
+            var longCount = await leagues.LongCountAsync();
+            var min = await leagues.MinAsync();
+            var max = await leagues.MaxAsync();
+            // Find by ID - returns record or null
+            var idToFind = 1;
+            var leagueById = await leagues.FindAsync(idToFind);
         }
 
         private static async Task QueryFilters()
@@ -33,7 +60,9 @@ namespace EntityFrameworkNet5.ConsoleApp
                 Console.WriteLine($"{league.Id}: {league.Name}");
             }
             var partialLeagueName = "Premiere";
+            // Using LINQ syntax
             // var partialMatches = await context.Leagues.Where(league => league.Name.Contains(partialLeagueName)).ToListAsync();
+            // Using EF Core functions
             var partialMatches = await context.Leagues.Where(league => EF.Functions.Like(league.Name, $"%{partialLeagueName}%")).ToListAsync();
             foreach (var league in partialMatches)
             {
