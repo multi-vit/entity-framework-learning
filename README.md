@@ -281,3 +281,35 @@ create a lock on the table if you do this
         Console.WriteLine($"{team.Id}: {team.Name}");
     }
     ```
+
+### Simple Update Query
+
+- Follows the usual pattern of retrieving the record, modifying it then saving changes:
+    ```cs
+    // Retrieve Record (Find league with an ID of 3)
+    var league = await context.Leagues.FindAsync(3);
+    // Make Record Changes
+    league.Name = "Scottish Premiership";
+    // Save Changes
+    await context.SaveChangesAsync();
+    // Retrieve Record again to check it has been updated
+    var updatedLeague = await context.Leagues.FindAsync(3);
+    Console.WriteLine($"{updatedLeague.Id}: {updatedLeague.Name}");
+    ```
+- If you ran this statement twice, nothing will change
+- If EF Core notices nothing is changing about the record, it won't even generate the SQL to run the query
+- This is called *Tracking* and we will go into more detail about this later
+- You can also use the `Update()` method if you already know the details of the record to update:
+    ```cs
+    var team = new Team
+    {
+        Id = 5,
+        Name = "Andy United",
+        LeagueId = 1
+    };
+    context.Teams.Update(team);
+    await context.SaveChangesAsync();
+    ```
+- **N.B.** If you don't give it a Primary Key, it will INSERT the record instead
+- If you give it a Primary Key that doesn't exist, it will threw an exception:
+    > DbUpdateConcurrencyException: "Database operation expected to affect 1 row(s) but actually affected 0 row(s)"
