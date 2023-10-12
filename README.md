@@ -258,3 +258,26 @@ create a lock on the table if you do this
     var idToFind = 1;
     var leagueById = await leagues.FindAsync(idToFind);
     ```
+
+#### Alternative LINQ Syntax
+
+- Can write our queries in a more SQL-like way
+- Not as clean as lambda query expression, so not recommended
+- But worth knowing as legacy code may use it:
+    ```cs
+    // Select All
+    // From <queryTokenRepresentingARecord> in <tableName>, select <Record> (no filer)
+    // Returns IQueryable but can call .ToList() or .ToListAsync() methods on it if needed
+    // As IQueryable doesn't have all the same methods as a List
+    var teams = from i in context.Teams select i;
+    foreach (var team in teams)
+    {
+        Console.WriteLine($"{team.Id}: {team.Name}");
+    }
+    // With equality WHERE clause and ToListAsync
+    var specificTeam = await (from i in context.Teams where i.Name == "Juventus" select i).ToListAsync();
+    foreach (var team in specificTeam)
+    {
+        Console.WriteLine($"{team.Id}: {team.Name}");
+    }
+    ```
