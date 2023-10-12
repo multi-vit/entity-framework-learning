@@ -228,3 +228,33 @@ create a lock on the table if you do this
         Console.WriteLine($"{league.Id}: {league.Name}");
     }
     ```
+
+### Additional Execution Methods
+
+- Extends from [filtering records](#filtering-records)
+- Sometimes you won't want the entire filtered list, you may just want the first or last
+- These methods can replace the `Where()` method call, but still take in the lambda query as normal
+- You should generally prefer methods that have a *OrDefault* option, as these don't throw exceptions. E.g.:
+- `First()` always expects a list and it will get the first, so if nothing is returned, it will throw an exception
+- `FirstOrDefault()` tends to be safer as it will attempt to get the first but return null if not successful
+    ```cs
+    // Syntax for use is context.<TableName>.<Method>(<Optional Lambda query>) e.g.:
+    // var league = await context.Leagues.FirstOrDefaultAsync(q => q.Name.Contains("A"));
+    // This is just setting up leagues for reuse and keeping the examples DRY
+    var leagues = context.Leagues;
+    // All items
+    var list = await leagues.ToListAsync();
+    // Specific items
+    var first = await leagues.FirstAsync();
+    var firstOrDefault = await leagues.FirstOrDefaultAsync();
+    var single = await leagues.SingleAsync();
+    var singleOrDefault = await leagues.SingleOrDefaultAsync();
+    // Mathematical methods
+    var count = await leagues.CountAsync();
+    var longCount = await leagues.LongCountAsync();
+    var min = await leagues.MinAsync();
+    var max = await leagues.MaxAsync();
+    // Find by ID - returns record or null
+    var idToFind = 1;
+    var leagueById = await leagues.FindAsync(idToFind);
+    ```
