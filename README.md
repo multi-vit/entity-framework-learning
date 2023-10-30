@@ -8,7 +8,7 @@ EF = Entity Framework
 
 This project began life being developed on a windows machine, but due to hardware failure had to be swapped over to a Mac with an M1 chip. Follow [these steps](#transition-to-mac-m1) to transition your own project.
 
-## DB Setup
+## Chapter 2: Getting Started with Entity Framework Core
 
 ### Primary Key
 
@@ -76,7 +76,7 @@ Our instructions to the Database (such as creating tables)
     - `provider` = the DB provider - doesn't need to be SqlServer, could be PostgreSQL etc.
     - `connection` = the equivalent of the connection string we set up in DbContext earlier
 
-## Interacting with your Database
+## Chapter 3: Interact with your Database
 
 ### EF Core Power Tools
 
@@ -160,7 +160,7 @@ but with AS Roma we are actually passing in the navigational property of the Lea
     await context.SaveChangesAsync();
     ```
 
-## Simple Select Operations
+### Simple Select Operations
 
 - We're going to be using LINQ: Language Integrated Query
 - Select ALL:
@@ -329,6 +329,60 @@ create a lock on the table if you do this
     // Can also use RemoveRange() method to do bulk
     ```
 
+### Tracking vs No Tracking
+
+- EF Core automatically tracks objects by default
+- This tracking does not stop, even after we call `.SaveChanges()`
+- We can manually tell EF Core not to track objects we retrieve from the database using the `AsNoTracking()` method
+    - When we don't track, it releases memory and improves performances
+    - But you cannot then change that record programmatically
+    - This is useful for large read-only operations, like retrieving a list for display
+- You can manually perform operations on the an untracked record by using `context.<Table>.Update(<recordToUpdate>), then calling `saveChanges()` as we've seen before in [Simple Update Query] (#simple-update-query)
+- EF Core then starts tracking this record
+
+    ```cs
+    // Using FirstOrDefault() because AsNoTracking() doesn't work with Find() method
+    var withTracking = await context.Teams.FirstOrDefaultAsync(q => q.Id == 2);
+    var withNoTracking = await context.Teams.AsNoTracking().FirstOrDefaultAsync(q => q.Id == 8);
+
+    withTracking.Name = "AC Milan";
+    withNoTracking.Name = "Rivoli United";
+
+    // Will show EF Core only tracking the withTracking record
+    var entriesBeforeFirstSave = context.ChangeTracker.Entries();
+    foreach (var entry in entriesBeforeFirstSave)
+    {
+        Console.WriteLine(entry);
+    }
+
+    await context.SaveChangesAsync();
+
+    // Shows EF Core is still tracking the withTracking record but now shows unchanged
+    var entriesAfterFirstSave = context.ChangeTracker.Entries();
+    foreach (var entry in entriesAfterFirstSave)
+    {
+        Console.WriteLine(entry);
+    }
+
+    // Manually adding to tracking
+    context.Teams.Update(withNoTracking);
+
+    // Shows EF Core now tracking the withNoTracking record 
+    var entriesBeforeSecondSave = context.ChangeTracker.Entries();
+    foreach (var entry in entriesBeforeSecondSave)
+    {
+        Console.WriteLine(entry);
+    }
+
+    await context.SaveChangesAsync();
+
+    // Shows EF Core still tracking both records, showing as unchanged
+    var entriesAfterSecondSave = context.ChangeTracker.Entries();
+    foreach (var entry in entriesAfterSecondSave)
+    {
+        Console.WriteLine(entry);
+    }
+    ```
 
 ## Transition to Mac M1
 
