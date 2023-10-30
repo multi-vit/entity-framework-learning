@@ -29,8 +29,32 @@ namespace EntityFrameworkNet5.ConsoleApp
             // await SimpleUpdateLeagueRecord();
             // await SimpleUpdateTeamRecord();
 
+            /* Perform Delete */
+            // await SimpleDelete();
+            //await DeleteWithRelationship();
+
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
+        }
+
+        private static async Task SimpleDelete()
+        {
+            // Have to find the entity to pass in first
+            var leagueToDelete = await context.Leagues.FindAsync(3);
+            context.Leagues.Remove(leagueToDelete);
+            await context.SaveChangesAsync();
+            // Can also use RemoveRange() method to do bulk
+        }
+
+        private static async Task DeleteWithRelationship()
+        {
+            // Same code as the above but deleting a league that has teams attached
+            // This only works if Cascade deletion is set in your migration:
+            // .OnDelete(DeleteBehavior.Cascade)
+            var leagueToDelete = await context.Leagues.FindAsync(2);
+            context.Leagues.Remove(leagueToDelete);
+            await context.SaveChangesAsync();
+            // Can also use RemoveRange() method to do bulk
         }
 
         private static async Task SimpleUpdateTeamRecord()
