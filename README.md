@@ -313,3 +313,53 @@ create a lock on the table if you do this
 - **N.B.** If you don't give it a Primary Key, it will INSERT the record instead
 - If you give it a Primary Key that doesn't exist, it will threw an exception:
     > DbUpdateConcurrencyException: "Database operation expected to affect 1 row(s) but actually affected 0 row(s)"
+
+### Transition to Mac M1
+
+Very difficult! :sweat_smile:
+
+#### Docker
+
+- Install Docker Desktop
+- In Settings -> Features in development, enable 'Use Rosetta' option (may move elsewhere in future)
+- In a terminal -> Pull and run the latest SQL Server image:
+    ```
+    docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=<yourPasswordHere>" -p 1433:1433 --name sql --hostname sql --platform linux/amd64 -v <pathToHardDriveFolderForPersitentStorage>:/var/opt/mssql -d mcr.microsoft.com/mssql/server:2022-latest
+    ```
+
+#### Terminal
+
+- Visual Studio for Mac does not support NuGet Package Manager Console
+- You need to add dotnet ef support to your terminal: `dotnet tool install --global dotnet-ef`
+- Verify the EF core tools are correctly installed: `dotnet ef`
+
+#### Migrations
+
+- On a new machine, you will need to rerun your migrations to create the database and tables: `dotnet ef database update`
+
+#### Code changes
+
+- Update your FootballLeagueDbContext.cs file to:
+    ```
+    optionsBuilder.UseSqlServer("Data Source=localhost; Initial Catalog=FootballLeague_EfCore; User Id=sa; Password=<yourPasswordHere>; TrustServerCertificate=True; Encrypt=True")
+    ```
+- Use the password you set in the [Docker section](#docker)
+
+#### Populate your new database
+
+- Rerun the `ConsoleApp` `Program.cs` file with the following methods uncommented:
+    ```
+    /* Simple Insert Operation Methods */
+    await AddNewLeague();
+    await AddNewTeamsWithLeague();
+    ```
+
+#### Add Secrets
+
+- Using Visual Studio's `Manage User Secrets' menu, add a `secrets.json` file with the following attributes:
+    ```json
+    {
+        "UserId": "YourDBUserName",
+        "Password": "YourDBPassword"
+    }
+    ```
