@@ -33,8 +33,59 @@ namespace EntityFrameworkNet5.ConsoleApp
             // await SimpleDelete();
             //await DeleteWithRelationship();
 
+            /* Tracking vs No-Tracking */
+            await TrackingVsNoTracking();
+
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
+        }
+
+        private static async Task TrackingVsNoTracking()
+        {
+            // Using FirstOrDefault() because AsNoTracking() doesn't work with Find() method
+            var withTracking = await context.Teams.FirstOrDefaultAsync(q => q.Id == 2);
+            var withNoTracking = await context.Teams.AsNoTracking().FirstOrDefaultAsync(q => q.Id == 8);
+            // When we don't track, it release memory and improves performance
+            // But you cannot change that record programmatically
+            // Useful for large read-only operations, like retrieving a list for display
+
+            withTracking.Name = "AC Milan";
+            withNoTracking.Name = "Rivoli United";
+
+            var entriesBeforeFirstSave = context.ChangeTracker.Entries();
+            foreach (var entry in entriesBeforeFirstSave)
+            {
+                Console.WriteLine(entry);
+            }
+
+            await context.SaveChangesAsync();
+
+            var entriesAfterFirstSave = context.ChangeTracker.Entries();
+            foreach (var entry in entriesAfterFirstSave)
+            {
+                Console.WriteLine(entry);
+            }
+
+            // You could manually perform operations on the withNoTracking variable by using context.Teams.Update(withNoTracking)
+            // Then saving changes, as we've looked at before
+            // Then it starts to be tracked
+
+            context.Teams.Update(withNoTracking);
+
+            var entriesBeforeSecondSave = context.ChangeTracker.Entries();
+            foreach (var entry in entriesBeforeSecondSave)
+            {
+                Console.WriteLine(entry);
+            }
+
+            await context.SaveChangesAsync();
+
+            var entriesAfterSecondSave = context.ChangeTracker.Entries();
+            foreach (var entry in entriesAfterSecondSave)
+            {
+                Console.WriteLine(entry);
+            }
+
         }
 
         private static async Task SimpleDelete()
