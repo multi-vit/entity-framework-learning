@@ -12,8 +12,8 @@ namespace EntityFrameworkNet5.ConsoleApp
         static async Task Main(string[] args)
         {
             /* Simple Insert Operation Methods */
-            // await AddNewLeague();
-            // await AddNewTeamsWithLeague();
+            await AddNewLeague();
+            await AddNewTeamsWithLeague();
 
             /* Simple Select Queries */
             // await SimpleSelectAllQuery();
@@ -27,7 +27,7 @@ namespace EntityFrameworkNet5.ConsoleApp
 
             /* Perform Update */
             // await SimpleUpdateLeagueRecord();
-            await SimpleUpdateTeamRecord();
+            // await SimpleUpdateTeamRecord();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
@@ -38,7 +38,7 @@ namespace EntityFrameworkNet5.ConsoleApp
             // Update a record where we already have the details of it from a previous GET
             var team = new Team
             {
-                Id = 5,
+                Id = 3,
                 Name = "Andy United",
                 LeagueId = 1
             };
