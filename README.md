@@ -384,6 +384,18 @@ create a lock on the table if you do this
     }
     ```
 
+## Chapter 4: Interacting with Related Records
+
+### Review One-To-Many Relationships
+- We have one league, with one or more teams
+- EF Core did it automatically for us because we followed naming convention of using `LeagueId` in the Team Domain model
+    - If we called it `LeagueFK`, but still had the `public virtual League League` property, EF Core would still generate a `LeagueId` column but **ALSO** a `LeagueFK`
+- We *could* make our Foreign Key nullable by adding a question mark after the type declaration: `public int? LeagueId { get; set; }`
+    - In this example, we could have a team that's not in a league
+- We could add a collection type to the League table `public List<Team> Teams { get; set; }`. `List<Team>` could also be `ICollectable` or other enumerable type
+    - This allows the us to access all the teams linked to a league, just by querying that league from the League table
+    - e.g. without having to do a separate query of the Teams table with the `LeagueId`
+
 ## Transition to Mac M1
 
 Very difficult! :sweat_smile:
