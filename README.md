@@ -4,6 +4,10 @@ Learning and steps from following: Trevoir Williams' `Entity Framework Core - A 
 
 EF = Entity Framework
 
+## Developing on Mac M1
+
+This project began life being developed on a windows machine, but due to hardware failure had to be swapped over to a Mac with an M1 chip. Follow [these steps](#transition-to-mac-m1) to transition your own project.
+
 ## DB Setup
 
 ### Primary Key
@@ -314,11 +318,23 @@ create a lock on the table if you do this
 - If you give it a Primary Key that doesn't exist, it will threw an exception:
     > DbUpdateConcurrencyException: "Database operation expected to affect 1 row(s) but actually affected 0 row(s)"
 
-### Transition to Mac M1
+### Simple Delete Query
+
+- Follows the usual pattern of retrieving the record to remove first:
+    ```cs
+    // Have to find the entity to pass in first
+    var leagueToDelete = await context.Leagues.FindAsync(3);
+    context.Leagues.Remove(leagueToDelete);
+    await context.SaveChangesAsync();
+    // Can also use RemoveRange() method to do bulk
+    ```
+
+
+## Transition to Mac M1
 
 Very difficult! :sweat_smile:
 
-#### Docker
+### Docker
 
 - Install Docker Desktop
 - In Settings -> Features in development, enable 'Use Rosetta' option (may move elsewhere in future)
@@ -327,17 +343,17 @@ Very difficult! :sweat_smile:
     docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=<yourPasswordHere>" -p 1433:1433 --name sql --hostname sql --platform linux/amd64 -v <pathToHardDriveFolderForPersitentStorage>:/var/opt/mssql -d mcr.microsoft.com/mssql/server:2022-latest
     ```
 
-#### Terminal
+### Terminal
 
 - Visual Studio for Mac does not support NuGet Package Manager Console
 - You need to add dotnet ef support to your terminal: `dotnet tool install --global dotnet-ef`
 - Verify the EF core tools are correctly installed: `dotnet ef`
 
-#### Migrations
+### Migrations
 
 - On a new machine, you will need to rerun your migrations to create the database and tables: `dotnet ef database update`
 
-#### Code changes
+### Code changes
 
 - Update your FootballLeagueDbContext.cs file to:
     ```
@@ -345,7 +361,7 @@ Very difficult! :sweat_smile:
     ```
 - Use the password you set in the [Docker section](#docker)
 
-#### Populate your new database
+### Populate your new database
 
 - Rerun the `ConsoleApp` `Program.cs` file with the following methods uncommented:
     ```
@@ -354,7 +370,7 @@ Very difficult! :sweat_smile:
     await AddNewTeamsWithLeague();
     ```
 
-#### Add Secrets
+### Add Secrets
 
 - Using Visual Studio's `Manage User Secrets' menu, add a `secrets.json` file with the following attributes:
     ```json
