@@ -12,8 +12,8 @@ namespace EntityFrameworkNet5.ConsoleApp
         static async Task Main(string[] args)
         {
             /* Simple Insert Operation Methods */
-            await AddNewLeague();
-            await AddNewTeamsWithLeague();
+            // await AddNewLeague();
+            // await AddNewTeamsWithLeague();
 
             /* Simple Select Queries */
             // await SimpleSelectAllQuery();
