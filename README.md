@@ -396,6 +396,79 @@ create a lock on the table if you do this
     - This allows the us to access all the teams linked to a league, just by querying that league from the League table
     - e.g. without having to do a separate query of the Teams table with the `LeagueId`
 
+### Inheriting common entity properties
+
+- Rather than duplicating the Id field in each Domain object, we abstracted it into a BaseDomainObject class
+- Each Domain object can then inherit from the BaseDomainObject and automatically get an Id by default
+
+### Adding Many-To-Many Relationships
+
+- As the name suggests, where we have many entities related to each other
+- In our context, many teams will play each other through a season
+- So we will have a new entity called `Match.cs` to Data project, that will contain a foreign key for both a home and away team, as well as a Date:
+    ```cs
+    public class Match : BaseDomainObject
+    {
+	    public int HomeTeamId { get; set; }
+	    public virtual Team HomeTeam { get; set; }
+	    public int AwayTeamId { get; set; }
+	    public virtual Team AwayTeam { get; set; }
+	    public DateTime Date { get; set; }
+    }
+    ```
+- Added Match table reference to the `FootballLeagueDbContext.cs`:
+    ```cs
+    public DbSet<Match> Matches { get; set; }
+    ```
+- We are breaking away from naming conventions in this case, as EF Core won't recognise the IDs as representing a Team
+- As a result, we had some manual configuration to do:
+    - Added navigation record in `Team.cs`:
+        ```cs
+        public virtual List<Match> HomeMatches { get; set; }
+        public virtual List<Match> AwayMatches { get; set; }
+        ```
+    - In `FootballLeagueDbContext.cs`, override the creation of the model:
+        ```cs
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Team>()
+                .HasMany(m => m.HomeMatches)
+                .WithOne(m => m.HomeTeam)
+                .HasForeignKey(m => m.HomeTeamId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Team>()
+                .HasMany(m => m.AwayMatches)
+                .WithOne(m => m.AwayTeam)
+                .HasForeignKey(m => m.AwayTeamId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+        ```
+- We went with `.OnDelete(DeleteBehaviour.Restrict)` because `.Cascade` was not allowed by EF Core as it may cause a cycle or multiple cascade paths
+    - `.Restrict` means we cannot delete this entity until all links to other entities have been removed
+- Added migration using `add-migration AddedMatchesTable` in the Package Manager Console
+    - On [Mac](#transition-to-mac-m1), use `dotnet ef migrations add AddedMatchesTable --context FootballLeagueDbContext`
+- Updated the DB using `Update-Databse` in Package Manager Console
+    - On [Mac](#transition-to-mac-m1), use `dotnet ef database update -c FootballLeagueDbContext`
+
+### Adding One-To-One Relationships
+
+- This is depicted by a `Coach`:
+    - A coach can only belong to one team
+    - A team only has one coach
+    ```cs
+    public class Coach : BaseDomainObject
+    {
+	    public string Name { get; set; }
+        // The TeamId is nullable because a coach may not belong to a team if they get fired
+	    public int? TeamId { get; set; }
+	    public virtual Team Team { get; set; }
+    }
+    ```
+- Added a navigational link to the `Team.cs`: `public virtual Coach Coach { get; set; }`
+
 ## Transition to Mac M1
 
 Very difficult! :sweat_smile:
