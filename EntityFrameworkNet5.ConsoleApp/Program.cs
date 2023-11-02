@@ -56,10 +56,20 @@ namespace EntityFrameworkNet5.ConsoleApp
             /* Projections to Other Data Types or Anonymous Types */
             // await SelectOneProperty();
             // await AnonymousProjection();
-            await StronglyTypedProjection();
+            // await StronglyTypedProjection();
+
+            /* Filter based on Related Data */
+            await FilteringWithRelatedData();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
+        }
+
+        private static async Task FilteringWithRelatedData()
+        {
+            var searchTerm = "United";
+            // Passing in the search term to ensure parameterisation in the SQL query
+            var leagues = await context.Leagues.Where(q => q.Teams.Any(x => x.Name.Contains(searchTerm))).ToListAsync();
         }
 
         private static async Task SelectOneProperty()

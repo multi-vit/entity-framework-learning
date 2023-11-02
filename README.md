@@ -539,6 +539,10 @@ create a lock on the table if you do this
         ```
 - Where possible and especially at scale, use strongly typed projection, defining data models as appropriate
 
+### Filtering on Related Records
+
+- Use the `.Where()` clause, nesting lambda functions to first leverage the navigational property, then add a condition
+
 ## Transition to Mac M1
 
 Very difficult! :sweat_smile:
