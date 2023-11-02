@@ -53,7 +53,8 @@ namespace EntityFrameworkNet5.ConsoleApp
             // await QueryRelatedRecords();
 
             /* Projections to Other Data Types or Anonymous Types */
-            await SelectOneProperty();
+            // await SelectOneProperty();
+            await AnonymousProjection();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
@@ -62,6 +63,21 @@ namespace EntityFrameworkNet5.ConsoleApp
         private static async Task SelectOneProperty()
         {
             var teams = await context.Teams.Select(q => q.Name).ToListAsync();
+        }
+
+        private static async Task AnonymousProjection()
+        {
+            // Used to select multiple properties from multiple tables
+            var teams = await context.Teams
+                .Include(q => q.Coach)
+                // Creating a new anonymous data type
+                .Select(q => new { TeamName = q.Name, CoachName = q.Coach.Name })
+                .ToListAsync();
+
+            foreach (var item in teams)
+            {
+                Console.WriteLine($"Team: {item.TeamName} | Coach: {item.CoachName}");
+            }
         }
 
         private static async Task QueryRelatedRecords()

@@ -527,6 +527,16 @@ create a lock on the table if you do this
 
 - Used for when we want specific properties only to be returned
 - Use `.Select()` to select a specific property from a record
+- To leverage anonymous types:
+    - These should only be used in one scope (so never returned from a method etc.), else use a defined domain model
+    - Combine `.Include()` to add multiple related records and `.Select()` with the `new {}` to define an anonymous type:
+        ```cs
+            var teams = await context.Teams
+            .Include(q => q.Coach)
+            // Creating a new anonymous data type
+            .Select(q => new { TeamName = q.Name, CoachName = q.Coach.Name })
+            .ToListAsync();
+        ```
 
 ## Transition to Mac M1
 
