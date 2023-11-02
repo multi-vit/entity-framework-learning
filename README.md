@@ -477,6 +477,9 @@ create a lock on the table if you do this
 - A more common use case is a league will already exist, so we want to insert a new team attached to a pre-existing league
 - This is why we add a `AddNewTeamWithLeagueId()` method where the `LeagueId` is already known
 - We also inverted the logic to add a `AddNweLeagueWithTeams()` method, using a new League record and leveraging the `List<Team>` navigational link
+
+#### Adding ManyToMany Related Records
+
 - For `AddNewMatches()` method, we have assumed that all teams already exist, but if not we could leverage the navigational property to create a new one at the same time:
     ```cs
         static async Task AddNewMatches()
@@ -505,8 +508,20 @@ create a lock on the table if you do this
             await context.SaveChangesAsync();
         }
     ```
+
+#### Adding OneToOne Related Records
+
 - For `AddNewCoach()` method, we add both a coach linked to a team and without a team, as TeamId is nullable
     - As with `AddNewMatch()`, we could create a `new Team{}` at the same time and EF Core will create both records
+
+### (Eager Loading) Including Related Data
+
+- Use `.include()` to do table JOINs and bring back related child data
+    - This uses the Foreign Key to find the related record
+    - You can chain multiple `.Include()` to get multiple children
+- Where we have children of children records, we can chain `.ThenInclude()` to use further foreign keys to get grand children
+    - You can chain multiple `.ThenInclude()` to go as far down the children as possible
+- As well as filtering using the lambda function e.g. `(q => q.Id == 1)` you can also use the `.Where()` method
 
 ## Transition to Mac M1
 

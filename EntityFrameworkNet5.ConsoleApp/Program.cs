@@ -37,6 +37,7 @@ namespace EntityFrameworkNet5.ConsoleApp
             // await TrackingVsNoTracking();
 
             /* Adding Records with relationships */
+
             // Adding OneToMany Related Records
             // await AddNewTeamsWithLeague();
             // await AddNewTeamWithLeagueId();
@@ -46,10 +47,36 @@ namespace EntityFrameworkNet5.ConsoleApp
             // await AddNewMatches();
 
             //Adding OneToOne Records
-            await AddNewCoach();
+            // await AddNewCoach();
+
+            /* Including Related Data - Eager Loading */
+            await QueryRelatedRecords();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
+        }
+
+        private static async Task QueryRelatedRecords()
+        {
+            // Get Many Related Records - Leagues -> Teams
+            var leagues = await context.Leagues.Include(q => q.Teams).ToListAsync();
+
+            // Get One Related Record - Team -> Coach
+            var team = await context.Teams
+                .Include(q => q.Coach)
+                .FirstOrDefaultAsync(q => q.Id == 17);
+
+            // Get 'Grand Children' Related Record - Team -> matches -> Home/Away Team
+            var teamWithMatchesAndOpponents = await context.Teams
+                .Include(q => q.AwayMatches).ThenInclude(q => q.HomeTeam)
+                .Include(q => q.HomeMatches).ThenInclude(q => q.AwayTeam)
+                .FirstOrDefaultAsync(q => q.Id == 12);
+
+            // Get Includes with filters
+            var teams = await context.Teams
+                .Where(q => q.HomeMatches.Count > 0)
+                .Include(q => q.Coach)
+                .ToListAsync();
         }
 
         private static async Task TrackingVsNoTracking()
@@ -214,7 +241,7 @@ namespace EntityFrameworkNet5.ConsoleApp
             }
         }
 
-        static async Task SimpleSelectAllQuery()
+        private static async Task SimpleSelectAllQuery()
         {
             // Get all leagues (SQL: SELECT * FROM Leagues)
             // Smartest, efficient way 
@@ -233,7 +260,7 @@ namespace EntityFrameworkNet5.ConsoleApp
             //}
         }
 
-        static async Task AddNewLeague()
+        private static async Task AddNewLeague()
         {
             // Adding a new League Object
             var league = new League { Name = "Serie A" };
@@ -245,7 +272,7 @@ namespace EntityFrameworkNet5.ConsoleApp
             await context.SaveChangesAsync();
         }
 
-        static async Task AddTeamsWithLeague(League league)
+        private static async Task AddTeamsWithLeague(League league)
         {
             var teams = new List<Team>
         {
@@ -268,7 +295,7 @@ namespace EntityFrameworkNet5.ConsoleApp
             await context.AddRangeAsync(teams);
         }
 
-        static async Task AddNewTeamsWithLeague()
+        private static async Task AddNewTeamsWithLeague()
         {
             var league = new League { Name = "Bundesliga" };
             var team = new Team { Name = "Bayern Munich", League = league };
@@ -276,14 +303,14 @@ namespace EntityFrameworkNet5.ConsoleApp
             await context.SaveChangesAsync();
         }
 
-        static async Task AddNewTeamWithLeagueId()
+        private static async Task AddNewTeamWithLeagueId()
         {
             var team = new Team { Name = "Bayern Munich", LeagueId = 1 };
             await context.AddAsync(team);
             await context.SaveChangesAsync();
         }
 
-        static async Task AddNewLeagueWithTeams()
+        private static async Task AddNewLeagueWithTeams()
         {
             var teams = new List<Team>()
             {
@@ -300,7 +327,7 @@ namespace EntityFrameworkNet5.ConsoleApp
 
         }
 
-        static async Task AddNewMatches()
+        private static async Task AddNewMatches()
         {
             var matches = new List<Match>
             {
@@ -321,7 +348,7 @@ namespace EntityFrameworkNet5.ConsoleApp
             await context.SaveChangesAsync();
         }
 
-        static async Task AddNewCoach()
+        private static async Task AddNewCoach()
         {
             var coachOne = new Coach { Name = "Ted Lasso", TeamId = 17 };
             var coachTwo = new Coach { Name = "Antonio Conte" };
