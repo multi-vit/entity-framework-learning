@@ -50,10 +50,18 @@ namespace EntityFrameworkNet5.ConsoleApp
             // await AddNewCoach();
 
             /* Including Related Data - Eager Loading */
-            await QueryRelatedRecords();
+            // await QueryRelatedRecords();
+
+            /* Projections to Other Data Types or Anonymous Types */
+            await SelectOneProperty();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
+        }
+
+        private static async Task SelectOneProperty()
+        {
+            var teams = await context.Teams.Select(q => q.Name).ToListAsync();
         }
 
         private static async Task QueryRelatedRecords()

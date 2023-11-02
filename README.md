@@ -523,6 +523,11 @@ create a lock on the table if you do this
     - You can chain multiple `.ThenInclude()` to go as far down the children as possible
 - As well as filtering using the lambda function e.g. `(q => q.Id == 1)` you can also use the `.Where()` method
 
+### Projections and Anonymous Data Types
+
+- Used for when we want specific properties only to be returned
+- Use `.Select()` to select a specific property from a record
+
 ## Transition to Mac M1
 
 Very difficult! :sweat_smile:
