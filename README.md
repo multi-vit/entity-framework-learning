@@ -505,6 +505,8 @@ create a lock on the table if you do this
             await context.SaveChangesAsync();
         }
     ```
+- For `AddNewCoach()` method, we add both a coach linked to a team and without a team, as TeamId is nullable
+    - As with `AddNewMatch()`, we could create a `new Team{}` at the same time and EF Core will create both records
 
 ## Transition to Mac M1
 

@@ -43,10 +43,10 @@ namespace EntityFrameworkNet5.ConsoleApp
             // await AddNewLeagueWithTeams();
 
             // Adding ManyToMany Records
-            await AddNewMatches();
+            // await AddNewMatches();
 
             //Adding OneToOne Records
-            //await AddNewCoach();
+            await AddNewCoach();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
@@ -323,7 +323,11 @@ namespace EntityFrameworkNet5.ConsoleApp
 
         static async Task AddNewCoach()
         {
-            throw new NotImplementedException();
+            var coachOne = new Coach { Name = "Ted Lasso", TeamId = 17 };
+            var coachTwo = new Coach { Name = "Antonio Conte" };
+            await context.AddAsync(coachOne);
+            await context.AddAsync(coachTwo);
+            await context.SaveChangesAsync();
         }
     }
 }
