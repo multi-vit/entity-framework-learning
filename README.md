@@ -477,6 +477,34 @@ create a lock on the table if you do this
 - A more common use case is a league will already exist, so we want to insert a new team attached to a pre-existing league
 - This is why we add a `AddNewTeamWithLeagueId()` method where the `LeagueId` is already known
 - We also inverted the logic to add a `AddNweLeagueWithTeams()` method, using a new League record and leveraging the `List<Team>` navigational link
+- For `AddNewMatches()` method, we have assumed that all teams already exist, but if not we could leverage the navigational property to create a new one at the same time:
+    ```cs
+        static async Task AddNewMatches()
+        {
+            var newTeam = new Team { Name = "Andy United", LeagueId = 1 };
+            var matches = new List<Match>
+            {
+                new Match
+                {
+                    HomeTeam = newTeam, AwayTeamId = 12, Date = DateTime.Now
+                },
+                new Match
+                {
+                    HomeTeamId = 12, AwayTeamId = 13, Date = DateTime.Now
+                },
+                new Match
+                {
+                    HomeTeamId = 14, AwayTeamId = 12, Date = new DateTime(2023, 11, 30)
+                },
+                new Match
+                {
+                    HomeTeamId = 13, AwayTeamId = 15, Date = DateTime.Now
+                }
+            };
+            await context.AddRangeAsync(matches);
+            await context.SaveChangesAsync();
+        }
+    ```
 
 ## Transition to Mac M1
 

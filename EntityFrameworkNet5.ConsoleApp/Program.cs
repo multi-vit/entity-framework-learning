@@ -40,10 +40,10 @@ namespace EntityFrameworkNet5.ConsoleApp
             // Adding OneToMany Related Records
             // await AddNewTeamsWithLeague();
             // await AddNewTeamWithLeagueId();
-            await AddNewLeagueWithTeams();
+            // await AddNewLeagueWithTeams();
 
             // Adding ManyToMany Records
-            //await AddNewMatches();
+            await AddNewMatches();
 
             //Adding OneToOne Records
             //await AddNewCoach();
@@ -302,7 +302,23 @@ namespace EntityFrameworkNet5.ConsoleApp
 
         static async Task AddNewMatches()
         {
-            throw new NotImplementedException();
+            var matches = new List<Match>
+            {
+                new Match
+                {
+                    HomeTeamId = 12, AwayTeamId = 13, Date = DateTime.Now
+                },
+                new Match
+                {
+                    HomeTeamId = 14, AwayTeamId = 12, Date = new DateTime(2023, 11, 30)
+                },
+                new Match
+                {
+                    HomeTeamId = 13, AwayTeamId = 15, Date = DateTime.Now
+                }
+            };
+            await context.AddRangeAsync(matches);
+            await context.SaveChangesAsync();
         }
 
         static async Task AddNewCoach()
