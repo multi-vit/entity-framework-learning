@@ -471,10 +471,12 @@ create a lock on the table if you do this
 
 ### Inserting Related Data
 
+#### Adding OneToMany Related Records
+
 - We previously had a `AddNewTeamsWithLeague()` method, where we created a new league and a new team, then linked them together before inserting them
 - A more common use case is a league will already exist, so we want to insert a new team attached to a pre-existing league
 - This is why we add a `AddNewTeamWithLeagueId()` method where the `LeagueId` is already known
-
+- We also inverted the logic to add a `AddNweLeagueWithTeams()` method, using a new League record and leveraging the `List<Team>` navigational link
 
 ## Transition to Mac M1
 

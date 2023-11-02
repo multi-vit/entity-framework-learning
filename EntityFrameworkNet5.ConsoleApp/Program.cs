@@ -38,9 +38,9 @@ namespace EntityFrameworkNet5.ConsoleApp
 
             /* Adding Records with relationships */
             // Adding OneToMany Related Records
-            await AddNewTeamsWithLeague();
-            await AddNewTeamWithLeagueId();
-            //await AddNewLeagueWithTeams();
+            // await AddNewTeamsWithLeague();
+            // await AddNewTeamWithLeagueId();
+            await AddNewLeagueWithTeams();
 
             // Adding ManyToMany Records
             //await AddNewMatches();
@@ -285,7 +285,19 @@ namespace EntityFrameworkNet5.ConsoleApp
 
         static async Task AddNewLeagueWithTeams()
         {
-            throw new NotImplementedException();
+            var teams = new List<Team>()
+            {
+                new Team { Name = "Arsenal"},
+                new Team { Name = "Chelsea"},
+                new Team { Name = "Manchester City"},
+                new Team { Name = "Manchester United"},
+                new Team { Name = "Crystal Palace"},
+
+            };
+            var league = new League { Name = "Premier League", Teams = teams };
+            await context.AddAsync(league);
+            await context.SaveChangesAsync();
+
         }
 
         static async Task AddNewMatches()
