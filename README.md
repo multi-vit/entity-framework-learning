@@ -537,6 +537,7 @@ create a lock on the table if you do this
             .Select(q => new { TeamName = q.Name, CoachName = q.Coach.Name })
             .ToListAsync();
         ```
+- Where possible and especially at scale, use strongly typed projection, defining data models as appropriate
 
 ## Transition to Mac M1
 

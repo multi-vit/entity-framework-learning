@@ -1,6 +1,7 @@
 ﻿using EntityFrameworkNet5.Data;
 using EntityFrameworkNet5.Domain;
 using Microsoft.EntityFrameworkCore;
+using EntityFrameworkNet5.Domain.Models;
 using System;
 
 namespace EntityFrameworkNet5.ConsoleApp
@@ -54,7 +55,8 @@ namespace EntityFrameworkNet5.ConsoleApp
 
             /* Projections to Other Data Types or Anonymous Types */
             // await SelectOneProperty();
-            await AnonymousProjection();
+            // await AnonymousProjection();
+            await StronglyTypedProjection();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
@@ -77,6 +79,27 @@ namespace EntityFrameworkNet5.ConsoleApp
             foreach (var item in teams)
             {
                 Console.WriteLine($"Team: {item.TeamName} | Coach: {item.CoachName}");
+            }
+        }
+
+        private static async Task StronglyTypedProjection()
+        {
+            // Used to select multiple properties from multiple tables
+            var teams = await context.Teams
+                .Include(q => q.Coach)
+                .Include(q => q.League)
+                // Using an existing model to strongly type the object
+                .Select(q => new TeamDetail
+                {
+                  Name = q.Name,
+                  CoachName = q.Coach.Name,
+                  LeagueName = q.League.Name
+                }
+                ).ToListAsync();
+
+            foreach (var item in teams)
+            {
+                Console.WriteLine($"Team: {item.Name} | Coach: {item.CoachName} | League: {item.LeagueName}");
             }
         }
 
