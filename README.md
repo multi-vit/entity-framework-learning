@@ -469,6 +469,13 @@ create a lock on the table if you do this
     ```
 - Added a navigational link to the `Team.cs`: `public virtual Coach Coach { get; set; }`
 
+### Inserting Related Data
+
+- We previously had a `AddNewTeamsWithLeague()` method, where we created a new league and a new team, then linked them together before inserting them
+- A more common use case is a league will already exist, so we want to insert a new team attached to a pre-existing league
+- This is why we add a `AddNewTeamWithLeagueId()` method where the `LeagueId` is already known
+
+
 ## Transition to Mac M1
 
 Very difficult! :sweat_smile:

@@ -34,7 +34,19 @@ namespace EntityFrameworkNet5.ConsoleApp
             //await DeleteWithRelationship();
 
             /* Tracking vs No-Tracking */
-            await TrackingVsNoTracking();
+            // await TrackingVsNoTracking();
+
+            /* Adding Records with relationships */
+            // Adding OneToMany Related Records
+            await AddNewTeamsWithLeague();
+            await AddNewTeamWithLeagueId();
+            //await AddNewLeagueWithTeams();
+
+            // Adding ManyToMany Records
+            //await AddNewMatches();
+
+            //Adding OneToOne Records
+            //await AddNewCoach();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
@@ -262,6 +274,28 @@ namespace EntityFrameworkNet5.ConsoleApp
             var team = new Team { Name = "Bayern Munich", League = league };
             await context.AddAsync(team);
             await context.SaveChangesAsync();
+        }
+
+        static async Task AddNewTeamWithLeagueId()
+        {
+            var team = new Team { Name = "Bayern Munich", LeagueId = 1 };
+            await context.AddAsync(team);
+            await context.SaveChangesAsync();
+        }
+
+        static async Task AddNewLeagueWithTeams()
+        {
+            throw new NotImplementedException();
+        }
+
+        static async Task AddNewMatches()
+        {
+            throw new NotImplementedException();
+        }
+
+        static async Task AddNewCoach()
+        {
+            throw new NotImplementedException();
         }
     }
 }
