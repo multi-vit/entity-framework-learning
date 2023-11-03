@@ -543,6 +543,16 @@ create a lock on the table if you do this
 
 - Use the `.Where()` clause, nesting lambda functions to first leverage the navigational property, then add a condition
 
+## Working with Views, Stored Procedures and Raw SQL
+
+### Adding Views and Other Data Objects
+
+- We ran a migration without making changes, which created a blank migration. This allows us to manually write the `Up` and `Down` functions
+- In the blank migration file (`20231103090103_AddingTeamDetailsViewAndEarlyMatchFunction.cs`):
+    - We added a `scalar function` -  a function that returns a single value
+    - We added a View - a virtual table based on the result-set of an SQL statement. Often used to present records from multiple tables as if the data were coming from one single table.
+- This was done using raw SQL
+
 ## Transition to Mac M1
 
 Very difficult! :sweat_smile:
