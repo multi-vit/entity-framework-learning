@@ -522,6 +522,12 @@ create a lock on the table if you do this
 - Where we have children of children records, we can chain `.ThenInclude()` to use further foreign keys to get grand children
     - You can chain multiple `.ThenInclude()` to go as far down the children as possible
 - As well as filtering using the lambda function e.g. `(q => q.Id == 1)` you can also use the `.Where()` method
+- I noticed that sometimes, related entities were still included even without specifying this, found this in the [Microsoft docs](https://learn.microsoft.com/en-us/ef/core/querying/related-data/eager):
+    > Entity Framework Core will automatically fix-up navigation properties to any other entities that were previously loaded into the context instance.
+    > So even if you don't explicitly include the data for a navigation property, the property may still be populated if some or all of the related entities were previously loaded.
+- And this in the [same Microsoft docs](https://learn.microsoft.com/en-us/ef/core/querying/related-data/eager), related to performance:
+    > Eager loading a collection navigation in a single query may cause performance issues.
+    > For more information, see [Single vs. split queries](https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries).
 
 ### Projections and Anonymous Data Types
 
@@ -560,8 +566,31 @@ create a lock on the table if you do this
 
 ### Querying Keyless Entities (like Views)
 
-- This is similar to querying regular tables
-- 
+- This is similar to querying regular tables, but the returned objects are read-only
+- As a result, EF Core will not track these objects
+- I had to allow the `CoachName` to be nullable in `TeamsCoachesLeaguesView.cs`, which was not required in the walkthrough
+    - I was getting a `system.data.sqltypes.sqlnullvalueexception` saying `data is null`
+    - Presumably this is because the walkthrough uses EF Core 6.0.0 and I am on 7.0.11
+
+### Querying with Raw SQL
+
+#### EF Core 7.0.0 and above
+
+- A `.FromSql()` method was introduced in EF Core 7.0.0 that uses parameterisation
+
+#### Older EF Core versions
+
+- These were the only methods referenced in the tutorial as they were using 6.0.0
+-Using the `.FromSqlRaw()` method allows you to specify a query in raw SQL however:
+    - This can be vulnerable to SQL injection
+    - This query has to return **ALL** the properties defined in the entity's' model, so you cannot limit to certain columns
+    - Can't do joins in the raw SQL but can chain the `.Include()` method to bring back related entities:
+    ```cs
+    var teamsOne = await context.Teams.FromSqlRaw("Select * from Teams").Include(q => q.Coach)ToListAsync();
+    ```
+    - Can also include filters, using string interpoloation to pass them in as variables
+        - **SQL INJECTION RISK** => EF Core does not parameterise here even though we passed in a variable like before
+        - In this scenario, use `.FromSqlInterpolated()` method instead 
 
 ## Transition to Mac M1
 

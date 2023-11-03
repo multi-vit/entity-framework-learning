@@ -62,10 +62,28 @@ namespace EntityFrameworkNet5.ConsoleApp
             // await FilteringWithRelatedData();
 
             /* Querying Views */
-            await QueryView();
+            // await QueryView();
+
+            /* Query with Raw SQL */
+            await RawSQLQuery();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
+        }
+
+        private static async Task RawSQLQuery()
+        {
+            var name = "Andy United";
+
+            // This method is only available in EF Core 7.0.0+
+            // It uses parameterisation
+            var teamsThree = await context.Teams.FromSql($"Select * from Teams where name = {name}").ToListAsync();
+
+            // Use these in EF Core versions before 7.0.0
+            // Don't use filters on this as it does not parameterise
+            var teamsOne = await context.Teams.FromSqlRaw($"Select * from Teams").Include(q => q.Coach).ToListAsync();
+            // Use this one for parameterisation
+            var teamsTwo = await context.Teams.FromSqlInterpolated($"Select * from Teams where name = {name}").ToListAsync();
         }
 
         private static async Task QueryView()
