@@ -111,6 +111,24 @@ namespace EntityFrameworkNet5.Data.Migrations
                     b.ToTable("Teams");
                 });
 
+            modelBuilder.Entity("EntityFrameworkNet5.Domain.TeamsCoachesLeaguesView", b =>
+                {
+                    b.Property<string>("CoachName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LeagueName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("TeamsCoachesLeagues", (string)null);
+                });
+
             modelBuilder.Entity("EntityFrameworkNet5.Domain.Coach", b =>
                 {
                     b.HasOne("EntityFrameworkNet5.Domain.Team", "Team")
