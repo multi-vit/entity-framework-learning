@@ -59,10 +59,18 @@ namespace EntityFrameworkNet5.ConsoleApp
             // await StronglyTypedProjection();
 
             /* Filter based on Related Data */
-            await FilteringWithRelatedData();
+            // await FilteringWithRelatedData();
+
+            /* Querying Views */
+            await QueryView();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
+        }
+
+        private static async Task QueryView()
+        {
+            var details = await context.TeamsCoachesLeagues.ToListAsync();
         }
 
         private static async Task FilteringWithRelatedData()

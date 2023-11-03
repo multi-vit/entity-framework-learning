@@ -550,8 +550,18 @@ create a lock on the table if you do this
 - We ran a migration without making changes, which created a blank migration. This allows us to manually write the `Up` and `Down` functions
 - In the blank migration file (`20231103090103_AddingTeamDetailsViewAndEarlyMatchFunction.cs`):
     - We added a `scalar function` -  a function that returns a single value
-    - We added a View - a virtual table based on the result-set of an SQL statement. Often used to present records from multiple tables as if the data were coming from one single table.
+    - We added a View - a virtual, read-only table based on the result-set of an SQL statement. Often used to present records from multiple tables as if the data were coming from one single table.
 - This was done using raw SQL
+- When adding Views to the DbContext, you must add a `HasNoKey()` else you will get an exception
+    - We also added a `.ToView()` method call for extra safety to ensure EF Core knows it is a View
+    ```cs
+    modelBuilder.Entity<TeamsCoachesLeaguesView>().HasNoKey().ToView("TeamsCoachesLeagues");
+    ```
+
+### Querying Keyless Entities (like Views)
+
+- This is similar to querying regular tables
+- 
 
 ## Transition to Mac M1
 
