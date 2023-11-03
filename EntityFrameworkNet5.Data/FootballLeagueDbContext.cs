@@ -39,6 +39,8 @@ namespace EntityFrameworkNet5.Data
                 .HasForeignKey(m => m.AwayTeamId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TeamsCoachesLeaguesView>().HasNoKey().ToView("TeamsCoachesLeagues");
         }
 
         public DbSet<Team> Teams { get; set; }
