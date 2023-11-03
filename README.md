@@ -592,6 +592,14 @@ create a lock on the table if you do this
         - **SQL INJECTION RISK** => EF Core does not parameterise here even though we passed in a variable like before
         - In this scenario, use `.FromSqlInterpolated()` method instead 
 
+### Add and Query using Stored Procedures
+
+- I used the new `.FromSql()` method provided by EF Core 7.0.0
+- The tutorial used an overloaded version of `.FromSqlRaw()` which does allow for parameterisation:
+```cs
+var team = await context.Coaches.FromSqlRaw("EXEC dbo.sp_GetTeamCoach {0}", teamId).ToListAsync();
+```
+
 ## Transition to Mac M1
 
 Very difficult! :sweat_smile:

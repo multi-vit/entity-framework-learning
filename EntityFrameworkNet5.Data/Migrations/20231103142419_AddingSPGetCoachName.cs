@@ -18,7 +18,7 @@ namespace EntityFrameworkNet5.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(@"DROP PROCEDURE [dbo].[sp_CoachName]");
+            migrationBuilder.Sql(@"DROP PROCEDURE [dbo].[sp_GetTeamCoach]");
         }
     }
 }

@@ -65,10 +65,19 @@ namespace EntityFrameworkNet5.ConsoleApp
             // await QueryView();
 
             /* Query with Raw SQL */
-            await RawSQLQuery();
+            // await RawSQLQuery();
+
+            /* Execute Stored Procedures */
+            await ExecStoredProcedure();
 
             Console.WriteLine("Press any key to end...");
             Console.ReadKey();
+        }
+
+        private static async Task ExecStoredProcedure()
+        {
+            var teamId = 17;
+            var team = await context.Coaches.FromSql($"EXEC dbo.sp_GetTeamCoach {teamId}").ToListAsync();
         }
 
         private static async Task RawSQLQuery()
